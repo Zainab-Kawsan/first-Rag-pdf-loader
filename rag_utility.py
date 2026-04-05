@@ -2,6 +2,8 @@ import os
 from dotenv import load_dotenv
 
 
+from langchain_community.document_loaders import PyPDFLoader
+
 from langchain_community.document_loaders import UnstructuredPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -29,8 +31,11 @@ def process_multiple_pdfs(file_list):
     all_docs=[]
     
     for file_name in file_list:
-        loader= UnstructuredPDFLoader(f"{working_dir}/{file_name}")
-        documents=loader.load()
+        # loader= UnstructuredPDFLoader(f"{working_dir}/{file_name}")
+        # documents=loader.load()
+
+        loader = PyPDFLoader(os.path.join(working_dir, file_name))
+        documents = loader.load()
 
         #add metadata 
         for doc in documents: 
@@ -40,8 +45,8 @@ def process_multiple_pdfs(file_list):
 
         #split: 
     text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=2000,
-            chunk_overlap=200
+            chunk_size=500,
+            chunk_overlap=100
         )
     texts=text_splitter.split_documents(all_docs)
 
